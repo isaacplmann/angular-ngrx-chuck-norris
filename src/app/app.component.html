@@ -1,9 +1,11 @@
-<h1>Chuck Norris Jokes</h1>
+<ng-container *ngIf="vm$ | async as vm">
+  <h1>{{ vm.fullName }} Jokes</h1>
 
-<app-joke-card-list
-  [jokes]="jokes"
-  [loading]="isLoading"
-  [error]="error"
-  (loadAllRequested)="onLoadAllRequested()"
-  (loadCategoryRequested)="onLoadCategoryRequested($event)"
-></app-joke-card-list>
+  <app-joke-card-list
+    [jokes]="vm.jokes"
+    [loading]="vm.isLoading"
+    [error]="vm.error"
+    (loadAllRequested)="onLoadAllRequested()"
+    (loadCategoryRequested)="onLoadCategoryRequested($event)"
+  ></app-joke-card-list>
+</ng-container>

@@ -1,8 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { JokeUIActions } from './state/joke';
-import { Joke } from './models';
-import { JokeService } from './services';
+import { Store, createSelector } from '@ngrx/store';
+import {
+  JokeUIActions,
+  selectJokeList,
+  selectJokeIsLoading,
+  selectJokeError,
+  selectJokeFullName
+} from './state/joke';
+
+const selectAppComponentViewModel = createSelector(
+  selectJokeList,
+  selectJokeIsLoading,
+  selectJokeError,
+  selectJokeFullName,
+  (jokes, isLoading, error, fullName) => ({
+    jokes,
+    isLoading,
+    error,
+    fullName
+  })
+);
 
 @Component({
   selector: 'app-root',
@@ -10,23 +27,31 @@ import { JokeService } from './services';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  jokes: Joke[] = [];
-  isLoading = false;
-  error: string;
+  // local component state
+  // only this component cares about it
+  // does not need to be saved
 
-  constructor(private store: Store<{}>, private jokeService: JokeService) {}
+  // ngrx
+  // if other components are concerned about it
+  // undo/redo
+  // track changes
+
+  // individual input values
+  //  submitted form
+
+  isCollapsed: boolean;
+
+  vm$ = this.store.select(selectAppComponentViewModel);
+
+  constructor(private store: Store<{}>) {}
 
   ngOnInit() {
-    this.jokeService.getJokes().subscribe(jokes => (this.jokes = jokes));
+    this.store.dispatch(JokeUIActions.initialized());
   }
 
   onLoadAllRequested() {
-    this.jokeService.getJokes().subscribe(jokes => (this.jokes = jokes));
+    this.store.dispatch(JokeUIActions.loadAllJokesRequested());
   }
 
-  onLoadCategoryRequested(category: string) {
-    this.jokeService
-      .getJokesByCategory(category)
-      .subscribe(jokes => (this.jokes = jokes));
-  }
+  onLoadCategoryRequested(category: string) {}
 }
