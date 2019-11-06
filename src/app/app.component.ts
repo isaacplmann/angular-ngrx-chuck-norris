@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { JokeUIActions, selectAppComponentViewModel } from './state/joke';
+import { JokeUIActions } from './state/joke';
+import { Joke } from './models';
+import { JokeService } from './services';
 
 @Component({
   selector: 'app-root',
@@ -8,19 +10,23 @@ import { JokeUIActions, selectAppComponentViewModel } from './state/joke';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  appComponentViewModel$ = this.store.select(selectAppComponentViewModel);
+  jokes: Joke[] = [];
+  isLoading = false;
+  error: string;
 
-  constructor(private store: Store<{}>) {}
+  constructor(private store: Store<{}>, private jokeService: JokeService) {}
 
   ngOnInit() {
-    this.store.dispatch(JokeUIActions.appComponentInitialized());
+    this.jokeService.getJokes().subscribe(jokes => (this.jokes = jokes));
   }
 
   onLoadAllRequested() {
-    this.store.dispatch(JokeUIActions.loadAllRequested());
+    this.jokeService.getJokes().subscribe(jokes => (this.jokes = jokes));
   }
 
   onLoadCategoryRequested(category: string) {
-    this.store.dispatch(JokeUIActions.loadCategoryRequested({ category }));
+    this.jokeService
+      .getJokesByCategory(category)
+      .subscribe(jokes => (this.jokes = jokes));
   }
 }

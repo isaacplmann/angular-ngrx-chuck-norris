@@ -10,45 +10,9 @@ import * as JokeUIActions from './ui.actions';
 export class JokeStoreEffects {
   constructor(private jokeService: JokeService, private actions$: Actions) {}
 
-  loadAllJokes$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(
-        JokeUIActions.appComponentInitialized,
-        JokeUIActions.loadAllRequested
-      ),
-      mergeMap(() =>
-        this.jokeService.getJokes().pipe(
-          map(jokes => JokeAPIActions.loadAllSucceeded({ jokes })),
-          catchError(error =>
-            of(JokeAPIActions.loadAllFailed({ error: error.message }))
-          )
-        )
-      )
-    )
-  );
+  // loadAllJokes
 
   // loadCategory
-  loadCategoryJokes$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(JokeUIActions.loadCategoryRequested),
-      mergeMap(action =>
-        this.jokeService.getJokesByCategory(action.category).pipe(
-          map(jokes => JokeAPIActions.loadCategorySucceeded({ jokes })),
-          catchError(error =>
-            of(JokeAPIActions.loadCategoryFailed({ error: error.message }))
-          )
-        )
-      )
-    )
-  );
 
   // showAlertOnFailure
-  showAlertOnFailure$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(JokeAPIActions.loadAllFailed),
-        tap(({ error }) => window.alert(error))
-      ),
-    { dispatch: false }
-  );
 }

@@ -17,32 +17,7 @@ export const initialState: State = {
   error: ''
 };
 
-const jokeReducer = createReducer(
-  initialState,
-  on(
-    JokeUIActions.appComponentInitialized,
-    JokeUIActions.loadAllRequested,
-    state => ({ ...state, isLoading: true, error: '' })
-  ),
-  on(
-    JokeAPIActions.loadAllSucceeded,
-    JokeAPIActions.loadCategorySucceeded,
-    (state, { jokes }) => ({
-      ...state,
-      jokes,
-      isLoading: false
-    })
-  ),
-  on(
-    JokeAPIActions.loadAllFailed,
-    JokeAPIActions.loadCategoryFailed,
-    (state, { error }) => ({
-      ...state,
-      error,
-      isLoading: false
-    })
-  )
-);
+const jokeReducer = createReducer(initialState);
 
 export function reducer(state: State | undefined, action: Action) {
   return jokeReducer(state, action);
